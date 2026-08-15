@@ -1,1 +1,62 @@
-[]
+ {
+      "schemaVersion": "1.0",
+      "updatedAt": "2026-08-14T21:00:00.000Z",
+      "apps": [
+        {
+          "id": "kyrn-optic",
+          "name": "KyrnOptic Studio & Image Optimizer",
+          "description": "Suite profesional de procesamiento, compresión inteligente, conversión
+  de formatos (WebP, AVIF, PNG, JPEG, TIFF) y filtros avanzados con motor Sharp.",
+          "author": "devlwte",
+          "version": "1.0.0",
+          "tags": ["Imágenes", "Optimización", "Sharp", "Productividad", "Diseño"],
+          "icon": "🎨",
+          "banner": "https://raw.githubusercontent.com/devlwte/kyrn-optic/main/public/banner.png",
+          "repoUrl": "https://github.com/devlwte/kyrn-optic.git",
+          "dependencies": {
+            "sharp": "^0.33.5",
+            "multer": "^1.4.5-lts.1"
+          }
+        },
+        {
+          "id": "snoufly",
+          "name": "Snoufly Note Manager",
+          "description": "Gestor de notas rápidas, apuntes diarios y recordatorios en entorno
+  local.",
+          "author": "devlwte",
+          "version": "1.0.0",
+          "tags": ["Productividad", "Notas", "Local"],
+          "icon": "📝",
+          "banner": "https://raw.githubusercontent.com/devlwte/kyrn-optic/main/public/banner.png",
+          "repoUrl": "https://github.com/devlwte/snoufly.git",
+          "dependencies": {}
+        },
+        {
+          "id": "kyrn-dashboard",
+          "name": "Kyrn System Metrics",
+          "description": "Monitor de rendimiento de hardware, consumo de memoria y telemetría de
+  red.",
+          "author": "devlwte",
+          "version": "1.0.0",
+          "tags": ["Monitoreo", "Hardware", "Utilidades"],
+          "icon": "📊",
+          "banner": null,
+          "repoUrl": "https://github.com/devlwte/system-metrics.git",
+          "dependencies": {}
+        },
+        {
+          "id": "local-kanban",
+          "name": "Local Kanban Board",
+          "description": "Tableros ágiles Kanban para gestión de tareas y proyectos sin conexión
+  a Internet.",
+          "author": "devlwte",
+          "version": "1.0.0",
+          "tags": ["Kanban", "Gestión", "Proyectos"],
+          "icon": "📋",
+          "banner": null,
+          "repoUrl": "https://github.com/devlwte/local-kanban.git",
+          "dependencies": {}
+        }
+      ]
+    }
+
