@@ -5,8 +5,7 @@
         {
           "id": "kyrn-optic",
           "name": "KyrnOptic Studio & Image Optimizer",
-          "description": "Suite profesional de procesamiento, compresión inteligente, conversión
-  de formatos (WebP, AVIF, PNG, JPEG, TIFF) y filtros avanzados con motor Sharp.",
+          "description": "Suite profesional de procesamiento, compresión inteligente, conversión de formatos (WebP, AVIF, PNG, JPEG, TIFF) y filtros avanzados con motor Sharp.",
           "author": "devlwte",
           "version": "1.0.0",
           "tags": ["Imágenes", "Optimización", "Sharp", "Productividad", "Diseño"],
@@ -21,8 +20,7 @@
         {
           "id": "snoufly",
           "name": "Snoufly Note Manager",
-          "description": "Gestor de notas rápidas, apuntes diarios y recordatorios en entorno
-  local.",
+          "description": "Gestor de notas rápidas, apuntes diarios y recordatorios en entorno local.",
           "author": "devlwte",
           "version": "1.0.0",
           "tags": ["Productividad", "Notas", "Local"],
@@ -34,8 +32,7 @@
         {
           "id": "kyrn-dashboard",
           "name": "Kyrn System Metrics",
-          "description": "Monitor de rendimiento de hardware, consumo de memoria y telemetría de
-  red.",
+          "description": "Monitor de rendimiento de hardware, consumo de memoria y telemetría de red.",
           "author": "devlwte",
           "version": "1.0.0",
           "tags": ["Monitoreo", "Hardware", "Utilidades"],
@@ -47,8 +44,7 @@
         {
           "id": "local-kanban",
           "name": "Local Kanban Board",
-          "description": "Tableros ágiles Kanban para gestión de tareas y proyectos sin conexión
-  a Internet.",
+          "description": "Tableros ágiles Kanban para gestión de tareas y proyectos sin conexión a Internet.",
           "author": "devlwte",
           "version": "1.0.0",
           "tags": ["Kanban", "Gestión", "Proyectos"],
