@@ -2,7 +2,7 @@
       {
         "id": "anuncio-v1.2",
         "title": "Nueva actualización disponible",
-        "message": "Se ha lanzado Kyrnex v1.2 con soporte para websockets y SSL local.",
+        "message": "Nueva forma de notificaciones usando github",
         "type": "info",
         "link": "https://github.com/devlwte/kyrnex/"
       },
