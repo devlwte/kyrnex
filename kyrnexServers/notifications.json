@@ -1,10 +1,10 @@
 [
       {
-        "id": "anuncio-v1.1",
+        "id": "anuncio-v1.2",
         "title": "Nueva actualización disponible",
-        "message": "Se ha lanzado Kyrnex v1.1 con soporte para websockets y SSL local.",
+        "message": "Se ha lanzado Kyrnex v1.2 con soporte para websockets y SSL local.",
         "type": "info",
-        "link": "https://github.com/tu-usuario/kyrnex/releases"
+        "link": "https://github.com/devlwte/kyrnex/"
       },
       {
         "id": "alerta-puerto-80",
