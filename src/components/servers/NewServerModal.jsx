@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Folder, Search, Server, Plus } from "lucide-react";
+import { X, Folder, Search, Server, Plus, FileCode } from "lucide-react";
 import { useTranslation } from "../../context/I18nContext";
 
 export function NewServerModal({ isOpen, onClose, onCreate }) {
@@ -23,6 +23,14 @@ export function NewServerModal({ isOpen, onClose, onCreate }) {
         const folderName = selected.split(/[\\/]/).pop();
         setName(folderName || "Nuevo Servidor");
       }
+    }
+  };
+
+  const handleBrowseMainFile = async () => {
+    const selected = await window.kyrnexAPI?.dialogs?.selectFile();
+    if (selected) {
+      const fileName = selected.split(/[\\/]/).pop();
+      setMainFile(fileName || selected);
     }
   };
 
@@ -106,12 +114,40 @@ export function NewServerModal({ isOpen, onClose, onCreate }) {
               <label className="text-[11px] font-semibold dark:text-slate-300 text-slate-700">
                 {t("modals.mainFile", "Archivo principal")}
               </label>
-              <input
-                type="text"
-                value={mainFile}
-                onChange={(e) => setMainFile(e.target.value)}
-                className="w-full dark:bg-kyrn-input bg-slate-50 border dark:border-kyrn-border border-slate-300 rounded-lg px-3.5 py-2 text-xs dark:text-white text-slate-900 focus:outline-none focus:border-kyrn-blue font-mono"
-              />
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={mainFile}
+                  onChange={(e) => setMainFile(e.target.value)}
+                  placeholder="index.html"
+                  className="flex-1 dark:bg-kyrn-input bg-slate-50 border dark:border-kyrn-border border-slate-300 rounded-lg px-3 py-2 text-xs dark:text-white text-slate-900 focus:outline-none focus:border-kyrn-blue font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={handleBrowseMainFile}
+                  title="Examinar archivo"
+                  className="flex items-center gap-1 px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 hover:dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-medium border border-slate-300 dark:border-slate-700 transition-colors flex-shrink-0"
+                >
+                  <FileCode size={14} />
+                  <span className="hidden sm:inline">{t("common.browse", "Explorar")}</span>
+                </button>
+              </div>
+              <div className="flex flex-wrap items-center gap-1 pt-1">
+                {["index.html", "server.js", "app.js", "main.mjs", "api.js"].map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setMainFile(p)}
+                    className={`text-[10px] px-2 py-0.5 rounded font-mono transition-colors ${
+                      mainFile === p
+                        ? "bg-blue-600 text-white font-semibold"
+                        : "dark:bg-slate-800 bg-slate-100 dark:text-slate-300 text-slate-700 hover:dark:bg-slate-700 hover:bg-slate-200 border dark:border-slate-700 border-slate-300"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
