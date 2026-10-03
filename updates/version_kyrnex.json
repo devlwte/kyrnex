@@ -1,11 +1,12 @@
 {
   "version": "1.0.0",
-  "repo_file_update": "aqui estara el link del repositorio donde estan los archivos a actualizar, descarga y remplaza los actuales automaticamente pero gusrda copia de los antiguos por si hay error",
-  "last_updated": "fecha",
+  "repo_file_update": "https://github.com/devlwte/kyrnex/archive/refs/tags/v1.0.0.zip",
+  "last_updated": "2026-10-03",
+  "changelog": "Lanzamiento oficial de Kyrnex con soporte multi-servidor y actualizador nativo.",
   "notification": {
-    "update": "What's new?",
-    "update_es": "¿Qué hay de nuevo?",
-    "update_jp": "en japones",
+    "update": "Welcome to Kyrnex v1.0.0",
+    "update_es": "Bienvenido a Kyrnex v1.0.0",
+    "update_jp": "Kyrnex v1.0.0へようこそ",
     "action_click": "restart_app"
   }
 }
