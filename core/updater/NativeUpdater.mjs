@@ -52,7 +52,7 @@ export class NativeUpdater extends EventEmitter {
 
     return {
       autoCheck: true,
-      autoInstall: false,
+      autoInstall: true,
       feedUrl: this.defaultFeedUrl,
       lastChecked: null,
       lastVersionChecked: null,

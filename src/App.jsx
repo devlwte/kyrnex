@@ -234,11 +234,30 @@ export function App() {
         }
       });
 
+      // Native updater events
+      const unsubUpdateAvailable = window.kyrnexAPI.updater?.onUpdateAvailable?.((data) => {
+        addNotification({
+          title: `¡Nueva versión v${data.latestVersion} disponible!`,
+          message: data.changelog || "Hay una nueva actualización disponible en GitHub.",
+          type: "info",
+        });
+      });
+
+      const unsubUpdateDownloaded = window.kyrnexAPI.updater?.onUpdateDownloaded?.((data) => {
+        addNotification({
+          title: `¡Kyrnex v${data.version} instalado!`,
+          message: "La actualización se aplicó con éxito. Ve a Configuración para reiniciar.",
+          type: "success",
+        });
+      });
+
       return () => {
         if (unsubStatus) unsubStatus();
         if (unsubMetrics) unsubMetrics();
         if (unsubPreview) unsubPreview();
         if (unsubLog) unsubLog();
+        if (unsubUpdateAvailable) unsubUpdateAvailable();
+        if (unsubUpdateDownloaded) unsubUpdateDownloaded();
       };
     }
   }, []);
@@ -503,6 +522,7 @@ export function App() {
                 toggleTheme={toggleTheme}
                 onCheckRemote={handleCheckRemoteNotifications}
                 isCheckingRemote={isCheckingRemote}
+                addNotification={addNotification}
               />
             )}
 

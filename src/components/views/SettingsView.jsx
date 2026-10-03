@@ -19,7 +19,7 @@ import {
 import { notificationManager } from "../../services/notificationManager";
 import { useTranslation } from "../../context/I18nContext";
 
-export function SettingsView({ theme, toggleTheme, onCheckRemote, isCheckingRemote }) {
+export function SettingsView({ theme, toggleTheme, onCheckRemote, isCheckingRemote, addNotification }) {
   const { t, language, setLanguage, supportedLanguages, appConfig, defaultIconPng } = useTranslation();
   const [defaultPort, setDefaultPort] = useState(3000);
   const [autoStartWindows, setAutoStartWindows] = useState(false);
@@ -79,6 +79,31 @@ export function SettingsView({ theme, toggleTheme, onCheckRemote, isCheckingRemo
     try {
       const res = await window.kyrnexAPI?.updater?.checkForUpdates(updateFeedUrl);
       setUpdateResult(res);
+
+      if (res && res.hasUpdate) {
+        addNotification?.({
+          title: `¡Nueva versión v${res.latestVersion} disponible!`,
+          message: res.changelog || "Hay una nueva actualización disponible en GitHub.",
+          type: "info",
+        });
+
+        // If auto-update is active, proceed to download and install automatically
+        if (autoUpdate) {
+          setIsInstallingUpdate(true);
+          const instRes = await window.kyrnexAPI?.updater?.installUpdate(res);
+          if (instRes && instRes.success) {
+            setInstallSuccess(true);
+            addNotification?.({
+              title: `¡Kyrnex v${res.latestVersion} instalado!`,
+              message: "Actualización lista. Haz clic en 'Reiniciar Kyrnex ahora' para aplicar los cambios.",
+              type: "success",
+            });
+          } else {
+            setInstallError(instRes?.error || "Error al instalar actualización");
+          }
+          setIsInstallingUpdate(false);
+        }
+      }
     } catch (err) {
       setUpdateResult({ hasUpdate: false, error: err.message });
     } finally {
@@ -94,6 +119,11 @@ export function SettingsView({ theme, toggleTheme, onCheckRemote, isCheckingRemo
       const res = await window.kyrnexAPI?.updater?.installUpdate(updateResult);
       if (res && res.success) {
         setInstallSuccess(true);
+        addNotification?.({
+          title: `¡Kyrnex v${updateResult.latestVersion} instalado!`,
+          message: "Actualización lista. Haz clic en 'Reiniciar Kyrnex ahora' para aplicar los cambios.",
+          type: "success",
+        });
       } else {
         setInstallError(res?.error || "Error al instalar actualización");
       }
