@@ -22,7 +22,24 @@ export class ServerManager extends EventEmitter {
 
   constructor(options = {}) {
     super();
-    const rootDir = process.cwd();
+    let rootDir = process.cwd();
+    const isPackaged = process.execPath && !process.execPath.toLowerCase().includes("electron.exe");
+    if (isPackaged) {
+      const exeDir = path.dirname(process.execPath);
+      const isInstalled =
+        fs.existsSync(path.join(exeDir, "Uninstall Kyrnex.exe")) ||
+        exeDir.toLowerCase().includes(path.join("appdata", "local", "programs").toLowerCase()) ||
+        exeDir.toLowerCase().includes("program files");
+      const hasPortableFlag = fs.existsSync(path.join(exeDir, ".portable"));
+
+      if (hasPortableFlag || !isInstalled) {
+        rootDir = exeDir;
+      } else {
+        const appData = process.env.APPDATA || process.env.USERPROFILE || exeDir;
+        rootDir = path.join(appData, "Kyrnex");
+      }
+    }
+
     this.dataDir = options.dataDir || path.join(rootDir, "data");
     this.#configPath = path.join(this.dataDir, "servers.json");
     this.#cacheDir = path.join(this.dataDir, "previews");

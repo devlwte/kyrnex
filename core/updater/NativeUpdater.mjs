@@ -22,8 +22,9 @@ export class NativeUpdater extends EventEmitter {
   constructor(options = {}) {
     super();
     this.appRoot = options.appRoot || process.cwd();
-    this.configPath = path.join(this.appRoot, "data", "updater-config.json");
-    this.backupBaseDir = path.join(this.appRoot, "data", "backups");
+    this.dataDir = options.dataDir || path.join(this.appRoot, "data");
+    this.configPath = path.join(this.dataDir, "updater-config.json");
+    this.backupBaseDir = path.join(this.dataDir, "backups");
     this.currentVersion = options.currentVersion || "1.0.0";
     this.defaultFeedUrl =
       "https://raw.githubusercontent.com/devlwte/kyrnex/refs/heads/main/updates/version_kyrnex.json";
