@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build and Packaging outputs
+dist/
+dist-electron/
+release/
+*.exe
+*.dmg
+*.app
+*.deb
+*.rpm
+*.snap
+*.AppImage
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment and Local config
+.env
+.env.local
+.env.*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Kyrnex runtime cache
+data/previews/*.png
+!data/previews/.gitkeep
+data/backups/
+data/temp_update/
+data/updater-config.json

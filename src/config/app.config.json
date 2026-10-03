@@ -1,0 +1,34 @@
+{
+  "appName": "KYRNEX",
+  "appSubtitle": "Local Web Runtime",
+  "version": "1.0.0",
+  "author": "KyrnForge",
+  "website": "https://github.com/kyrnforge/kyrnex",
+  "branding": {
+    "iconSvg": "./icon.svg",
+    "iconPng": "./icon.png",
+    "favicon": "./favicon.ico",
+    "logoAlt": "Kyrnex Icon"
+  },
+  "defaultSettings": {
+    "defaultPort": 3000,
+    "theme": "dark",
+    "defaultLanguage": "es",
+    "autoStartWindows": false,
+    "remoteFeedUrl": "https://raw.githubusercontent.com/kyrnforge/kyrnex-releases/main/notifications.json"
+  },
+  "supportedLanguages": [
+    {
+      "code": "es",
+      "name": "Español",
+      "flag": "🇪🇸",
+      "nativeName": "Español"
+    },
+    {
+      "code": "en",
+      "name": "English",
+      "flag": "🇺🇸",
+      "nativeName": "English"
+    }
+  ]
+}

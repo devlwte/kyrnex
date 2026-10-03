@@ -1,0 +1,54 @@
+{
+  "name": "dynexpress",
+  "version": "2.0.0",
+  "description": "Next-generation multi-server dynamic Express orchestrator with hot-reloading, fluent route builders, socket lifecycle tracking, live telemetry, and zero-downtime port rebinding.",
+  "main": "./main.mjs",
+  "module": "./main.mjs",
+  "types": "./index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./main.mjs",
+      "default": "./main.mjs"
+    }
+  },
+  "files": [
+    "main.mjs",
+    "index.d.ts",
+    "utils/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node ../../test/test-dynexpress-v2.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devlwte/dynexpress.git"
+  },
+  "bugs": {
+    "url": "https://github.com/devlwte/dynexpress/issues"
+  },
+  "homepage": "https://github.com/devlwte/dynexpress#readme",
+  "keywords": [
+    "express",
+    "dynamic-express",
+    "multi-server",
+    "hot-reload",
+    "route-builder",
+    "telemetry",
+    "orchestrator",
+    "runtime",
+    "kyrnforge"
+  ],
+  "author": "KyrnForge <devlwte>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "com.kyrnforge.kyrnex",
+  "productName": "Kyrnex",
+  "copyright": "Copyright © 2026 KyrnForge",
+  "directories": {
+    "output": "release"
+  },
+  "asar": true,
+  "files": [
+    "dist/**/*",
+    "electron/**/*",
+    "core/**/*",
+    "modules/**/*",
+    "data/**/*",
+    "package.json"
+  ],
+  "win": {
+    "icon": "assets/icon.ico",
+    "target": [
+      {
+        "target": "portable",
+        "arch": ["x64"]
+      }
+    ],
+    "artifactName": "Kyrnex-v${version}-Portable.${ext}"
+  }
+}

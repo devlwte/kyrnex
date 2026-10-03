@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kyrnex - Iniciando...</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background: #090d16;
+      color: #fff;
+      width: 500px;
+      height: 300px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: 14px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(37, 99, 235, 0.2);
+      position: relative;
+    }
+    /* Ambient backdrop glow */
+    .glow {
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.3) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .header-area {
+      padding: 32px 32px 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      z-index: 10;
+    }
+    .logo-container {
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .logo-container img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 20px rgba(37, 99, 235, 0.5));
+      border-radius: 14px;
+    }
+    .title-box h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      background: linear-gradient(to right, #ffffff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 2px;
+    }
+    .title-box p {
+      font-size: 10px;
+      letter-spacing: 2.5px;
+      color: #60a5fa;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .version-tag {
+      display: inline-block;
+      margin-top: 5px;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #94a3b8;
+      font-size: 10px;
+      padding: 1px 8px;
+      border-radius: 9999px;
+      font-family: monospace;
+    }
+    .status-area {
+      padding: 0 32px;
+      z-index: 10;
+    }
+    .status-text {
+      font-size: 11.5px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .spinner {
+      width: 13px;
+      height: 13px;
+      border: 2px solid rgba(59, 130, 246, 0.25);
+      border-top-color: #38bdf8;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .progress-bar-container {
+      width: 100%;
+      height: 4px;
+      background: rgba(30, 41, 59, 0.9);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 15%;
+      background: linear-gradient(90deg, #2563eb, #38bdf8, #6366f1);
+      border-radius: 9999px;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+      transition: width 0.35s ease-out;
+    }
+    .footer-area {
+      padding: 12px 32px;
+      background: rgba(11, 15, 23, 0.85);
+      border-top: 1px solid rgba(30, 41, 59, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #64748b;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="header-area">
+    <div class="logo-container">
+      <img src="../assets/icon.png" alt="K" onerror="this.outerHTML='<span style=\'font-weight:900;font-size:26px;color:#fff\'>K</span>'">
+    </div>
+    <div class="title-box">
+      <h1>KYRNEX</h1>
+      <p>Local Web Runtime</p>
+      <span class="version-tag">v1.0.0</span>
+    </div>
+  </div>
+
+  <div class="status-area">
+    <div class="status-text">
+      <div class="spinner"></div>
+      <span id="status-label">Iniciando motor DynExpress...</span>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+  </div>
+
+  <div class="footer-area">
+    <span>Plataforma de Ejecución Multi-Servidor</span>
+    <span>Desarrollado por KyrnForge</span>
+  </div>
+
+  <script>
+    const messages = [
+      { text: "Iniciando motor DynExpress...", progress: 30 },
+      { text: "Cargando configuración de servidores...", progress: 60 },
+      { text: "Verificando puertos y vistas previas...", progress: 85 },
+      { text: "Cargando interfaz gráfica...", progress: 100 }
+    ];
+    let step = 0;
+    const label = document.getElementById("status-label");
+    const bar = document.getElementById("progress-bar");
+
+    const interval = setInterval(() => {
+      if (step < messages.length) {
+        label.textContent = messages[step].text;
+        bar.style.width = messages[step].progress + "%";
+        step++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 400);
+  </script>
+</body>
+</html>
