@@ -480,6 +480,7 @@ export class DynExpress extends EventEmitter {
     logger?.info("DynExpress", `Iniciando servidor para '${name}' en puerto base ${port}`);
 
     try {
+      const startTime = new Date();
       const { type, value } = this.#validateRouters(routers);
 
       let appRoutes;
@@ -538,7 +539,7 @@ export class DynExpress extends EventEmitter {
         requests5xx: 0,
         statusCodes: {},
         lastResponseTimeMs: 0,
-        startTime: new Date(),
+        startTime,
       };
 
       // Configure middleware
@@ -549,7 +550,6 @@ export class DynExpress extends EventEmitter {
 
       // Start server listener with socket tracking
       const server = await this.#startServer(app, availablePort, sockets);
-      const startTime = new Date();
       const url = `http://localhost:${availablePort}/`;
 
       // Store server instance

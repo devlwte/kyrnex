@@ -325,8 +325,8 @@ export class ServerManager extends EventEmitter {
     let routers = [];
     const fullMainPath = path.join(srv.rootDir, srv.mainFile);
 
-    // If main file is a router script (.js / .mjs), use it
-    if (fs.existsSync(fullMainPath) && (srv.mainFile.endsWith(".js") || srv.mainFile.endsWith(".mjs"))) {
+    // Only treat as dynamic backend router if server type is explicitly 'router'
+    if (srv.type === "router" && fs.existsSync(fullMainPath) && (srv.mainFile.endsWith(".js") || srv.mainFile.endsWith(".mjs"))) {
       routers = fullMainPath;
     } else {
       // Default router to serve public static files or fallback index.html
@@ -511,9 +511,15 @@ export class ServerManager extends EventEmitter {
     return null;
   }
 
-  cleanup() {
+  async cleanup() {
     if (this.#metricsInterval) {
       clearInterval(this.#metricsInterval);
+      this.#metricsInterval = null;
+    }
+    try {
+      await dyn.stopAll();
+    } catch (err) {
+      logger?.error("ServerManager", "Error al detener servidores en cleanup", err);
     }
   }
 }

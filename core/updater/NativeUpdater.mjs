@@ -42,7 +42,7 @@ export class NativeUpdater extends EventEmitter {
         const parsed = JSON.parse(raw);
         return {
           autoCheck: parsed.autoCheck !== undefined ? parsed.autoCheck : true,
-          autoInstall: parsed.autoInstall !== undefined ? parsed.autoInstall : false,
+          autoInstall: parsed.autoInstall !== undefined ? parsed.autoInstall : true,
           feedUrl: parsed.feedUrl || this.defaultFeedUrl,
           lastChecked: parsed.lastChecked || null,
           lastVersionChecked: parsed.lastVersionChecked || null,
@@ -246,10 +246,18 @@ export class NativeUpdater extends EventEmitter {
 
       offset = dataStart + compressedSize;
 
+      const resolvedTarget = path.resolve(targetDir);
+      const outFilePath = path.resolve(targetDir, fileName);
+
+      // Prevent Zip-Slip directory traversal attacks
+      if (!outFilePath.startsWith(resolvedTarget + path.sep) && outFilePath !== resolvedTarget) {
+        console.warn(`[NativeUpdater] Rejected unsafe zip entry outside target: ${fileName}`);
+        continue;
+      }
+
       // Skip directory entries (ends with /)
       if (fileName.endsWith("/")) {
-        const fullDirPath = path.join(targetDir, fileName);
-        await fsp.mkdir(fullDirPath, { recursive: true });
+        await fsp.mkdir(outFilePath, { recursive: true });
         continue;
       }
 
@@ -265,7 +273,6 @@ export class NativeUpdater extends EventEmitter {
         continue;
       }
 
-      const outFilePath = path.join(targetDir, fileName);
       const outDir = path.dirname(outFilePath);
       if (!fs.existsSync(outDir)) {
         await fsp.mkdir(outDir, { recursive: true });
@@ -281,7 +288,7 @@ export class NativeUpdater extends EventEmitter {
   /**
    * Creates a backup of the current target directory before applying updates
    */
-  async createBackup(targetPaths = ["dist", "core", "package.json"]) {
+  async createBackup(targetPaths = ["dist", "core", "package.json", "src"]) {
     const timestamp = Date.now();
     const backupDir = path.join(this.backupBaseDir, `backup-${this.currentVersion}-${timestamp}`);
     await fsp.mkdir(backupDir, { recursive: true });
@@ -310,7 +317,7 @@ export class NativeUpdater extends EventEmitter {
   /**
    * Rollback files from a backup directory if any error occurs
    */
-  async rollback(backupDir, targetPaths = ["dist", "core", "package.json"]) {
+  async rollback(backupDir, targetPaths = ["dist", "core", "package.json", "src"]) {
     console.warn("[NativeUpdater] Rolling back changes from:", backupDir);
     try {
       for (const relPath of targetPaths) {
@@ -380,7 +387,16 @@ export class NativeUpdater extends EventEmitter {
           }
         }
 
-        // Copy updated dist, core, and package.json if present
+        // Clean stale assets in dist/assets to prevent file bloat
+        const oldAssetsDir = path.join(this.appRoot, "dist", "assets");
+        const newDistDir = path.join(sourceDir, "dist");
+        if (fs.existsSync(newDistDir) && fs.existsSync(oldAssetsDir)) {
+          try {
+            await fsp.rm(oldAssetsDir, { recursive: true, force: true });
+          } catch {}
+        }
+
+        // Copy updated dist, core, package.json, and src if present
         for (const item of ["dist", "core", "package.json", "src"]) {
           const itemSrc = path.join(sourceDir, item);
           if (fs.existsSync(itemSrc)) {
@@ -405,9 +421,17 @@ export class NativeUpdater extends EventEmitter {
           pkgData.version = updateInfo.latestVersion;
           await fsp.writeFile(pkgPath, JSON.stringify(pkgData, null, 2), "utf-8");
         }
+
+        const appCfgPath = path.join(this.appRoot, "src", "config", "app.config.json");
+        if (fs.existsSync(appCfgPath)) {
+          const appCfg = JSON.parse(await fsp.readFile(appCfgPath, "utf-8"));
+          appCfg.version = updateInfo.latestVersion;
+          await fsp.writeFile(appCfgPath, JSON.stringify(appCfg, null, 2), "utf-8");
+        }
+
         this.currentVersion = updateInfo.latestVersion;
       } catch (pkgErr) {
-        console.warn("[NativeUpdater] Could not update package.json version:", pkgErr);
+        console.warn("[NativeUpdater] Could not update version in configs:", pkgErr);
       }
 
       this.isUpdating = false;

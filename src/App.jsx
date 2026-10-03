@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Download, RotateCcw, X } from "lucide-react";
 import { Sidebar } from "./components/layout/Sidebar";
 import { TopHeader } from "./components/layout/TopHeader";
 import { ServerCarousel } from "./components/servers/ServerCarousel";
@@ -40,6 +41,7 @@ export function App() {
     return notificationManager.getStoredNotifications();
   });
   const [isCheckingRemote, setIsCheckingRemote] = useState(false);
+  const [updateBanner, setUpdateBanner] = useState(null);
 
   // Keep a ref of servers and t for event handler notifications
   const serversRef = useRef(servers);
@@ -241,6 +243,11 @@ export function App() {
           message: data.changelog || "Hay una nueva actualización disponible en GitHub.",
           type: "info",
         });
+        setUpdateBanner({
+          type: "available",
+          version: data.latestVersion,
+          changelog: data.changelog,
+        });
       });
 
       const unsubUpdateDownloaded = window.kyrnexAPI.updater?.onUpdateDownloaded?.((data) => {
@@ -248,6 +255,10 @@ export function App() {
           title: `¡Kyrnex v${data.version} instalado!`,
           message: "La actualización se aplicó con éxito. Ve a Configuración para reiniciar.",
           type: "success",
+        });
+        setUpdateBanner({
+          type: "downloaded",
+          version: data.version,
         });
       });
 
@@ -541,6 +552,78 @@ export function App() {
         onClose={() => setIsModalOpen(false)}
         onCreate={handleCreateServer}
       />
+
+      {/* Floating Update Notification Toast */}
+      {updateBanner && (
+        <aside
+          aria-label="Notificación de actualización"
+          className="fixed bottom-5 right-5 z-50 max-w-sm w-full dark:bg-[#0f172a] bg-white border dark:border-blue-500/40 border-blue-200 rounded-xl p-4 shadow-2xl transition-all duration-300 select-none"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <div
+                className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                  updateBanner.type === "downloaded"
+                    ? "bg-emerald-500/20 text-emerald-400"
+                    : "bg-blue-500/20 text-blue-400"
+                }`}
+              >
+                {updateBanner.type === "downloaded" ? (
+                  <RotateCcw size={16} />
+                ) : (
+                  <Download size={16} />
+                )}
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <h5 className="text-xs font-bold dark:text-white text-slate-900">
+                    {updateBanner.type === "downloaded"
+                      ? `¡Actualización v${updateBanner.version} lista!`
+                      : `Nueva versión v${updateBanner.version} disponible`}
+                  </h5>
+                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-blue-600 text-white font-semibold">
+                    GitHub
+                  </span>
+                </div>
+                <p className="text-[11px] dark:text-slate-300 text-slate-600 line-clamp-2">
+                  {updateBanner.type === "downloaded"
+                    ? "Los archivos se actualizaron con éxito. Reinicia la aplicación para aplicar los cambios."
+                    : updateBanner.changelog || "Hay una nueva versión disponible para actualizar."}
+                </p>
+                <div className="flex items-center gap-2 pt-1.5">
+                  {updateBanner.type === "downloaded" ? (
+                    <button
+                      onClick={() => window.kyrnexAPI?.updater?.relaunch()}
+                      className="px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm flex items-center gap-1.5 transition-colors"
+                    >
+                      <RotateCcw size={12} />
+                      <span>Reiniciar ahora</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setCurrentTab("settings");
+                        setUpdateBanner(null);
+                      }}
+                      className="px-3 py-1 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-sm flex items-center gap-1.5 transition-colors"
+                    >
+                      <Download size={12} />
+                      <span>Ver en Ajustes</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => setUpdateBanner(null)}
+              className="text-slate-400 hover:dark:text-white hover:text-slate-900 p-1 rounded-md transition-colors"
+              title="Cerrar aviso"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        </aside>
+      )}
     </div>
   );
 }

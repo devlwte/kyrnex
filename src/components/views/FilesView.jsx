@@ -14,11 +14,17 @@ export function FilesView({ selectedServer }) {
   }
 
   const handleOpenFolder = () => {
-    window.kyrnexAPI?.system?.openPath(selectedServer.rootDir);
+    if (selectedServer?.rootDir) {
+      window.kyrnexAPI?.system?.openPath(selectedServer.rootDir);
+    }
   };
 
   const handleOpenPublicFolder = () => {
-    const fullPath = `${selectedServer.rootDir}/${selectedServer.publicDir || ""}`;
+    if (!selectedServer?.rootDir) return;
+    const pub = (selectedServer.publicDir || "").trim();
+    const fullPath = pub
+      ? `${selectedServer.rootDir.replace(/[\\/]+$/, "")}/${pub.replace(/^[\\/]+/, "")}`
+      : selectedServer.rootDir;
     window.kyrnexAPI?.system?.openPath(fullPath);
   };
 
