@@ -24,7 +24,7 @@
         "arch": ["x64"]
       },
       {
-        "target": "portable",
+        "target": "zip",
         "arch": ["x64"]
       }
     ]
@@ -39,8 +39,5 @@
     "uninstallerIcon": "assets/icon.ico",
     "installerHeaderIcon": "assets/icon.ico",
     "artifactName": "Kyrnex-Setup-${version}.${ext}"
-  },
-  "portable": {
-    "artifactName": "Kyrnex-Portable-${version}.${ext}"
   }
 }

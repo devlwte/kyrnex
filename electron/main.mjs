@@ -5,6 +5,7 @@
 
 import { app, BrowserWindow, ipcMain, dialog, shell } from "electron";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import { serverManager } from "../core/manager/ServerManager.mjs";
 import { logger } from "../core/logger/Logger.mjs";
@@ -14,8 +15,28 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const appRoot = path.resolve(__dirname, "..");
 
+// Portable mode: isolate profile and Chromium cache in data/profile next to executable
+if (app.isPackaged) {
+  const exeDir = path.dirname(process.execPath);
+  const isInstalled =
+    fs.existsSync(path.join(exeDir, "Uninstall Kyrnex.exe")) ||
+    exeDir.toLowerCase().includes(path.join("appdata", "local", "programs").toLowerCase()) ||
+    exeDir.toLowerCase().includes("program files");
+  const hasPortableFlag = fs.existsSync(path.join(exeDir, ".portable"));
+
+  if (hasPortableFlag || !isInstalled) {
+    const portableDataDir = path.join(exeDir, "data");
+    const profileDir = path.join(portableDataDir, "profile");
+    if (!fs.existsSync(profileDir)) {
+      fs.mkdirSync(profileDir, { recursive: true });
+    }
+    app.setPath("userData", profileDir);
+  }
+}
+
 const nativeUpdater = new NativeUpdater({
   appRoot,
+  dataDir: serverManager.dataDir,
   currentVersion: app.getVersion() || "1.0.0",
 });
 
