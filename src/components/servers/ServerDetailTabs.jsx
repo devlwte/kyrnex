@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   Settings,
   FolderClosed,
+  FolderOpen,
   LayoutGrid,
   Sliders,
   Folder,
