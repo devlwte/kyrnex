@@ -1,7 +1,7 @@
 {
   "appName": "KYRNEX",
   "appSubtitle": "Local Web Runtime",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "KyrnForge",
   "website": "https://github.com/kyrnforge/kyrnex",
   "branding": {
@@ -35,6 +35,12 @@
       "name": "日本語",
       "flag": "🇯🇵",
       "nativeName": "日本語"
+    },
+    {
+      "code": "pt",
+      "name": "Português",
+      "flag": "🇧🇷",
+      "nativeName": "Português"
     }
   ]
 }

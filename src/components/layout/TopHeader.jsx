@@ -28,7 +28,7 @@ export function TopHeader({
   onCheckRemote,
   isCheckingRemote,
 }) {
-  const { t } = useTranslation();
+  const { t, appConfig } = useTranslation();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const displayTitle = title || t("titles.servers", "Servidores Locales");
   const displaySubtitle = subtitle || t("titles.serversSubtitle", "Gestiona tus servidores Express y aplicaciones web");
@@ -50,9 +50,14 @@ export function TopHeader({
     <header className="titlebar-drag h-16 sm:h-20 px-3 sm:px-5 md:px-8 flex items-center justify-between border-b dark:border-kyrn-border/80 border-slate-200 dark:bg-kyrn-bg/95 bg-white/95 transition-colors duration-200 select-none relative z-30 min-w-0 flex-shrink-0">
       {/* Title & Subtitle */}
       <div className="titlebar-no-drag min-w-0 mr-2 sm:mr-4">
-        <h2 className="text-sm sm:text-base md:text-xl font-bold dark:text-white text-slate-900 tracking-wide transition-colors truncate">
-          {displayTitle}
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm sm:text-base md:text-xl font-bold dark:text-white text-slate-900 tracking-wide transition-colors truncate">
+            {displayTitle}
+          </h2>
+          <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full dark:bg-blue-950/70 bg-blue-100 text-blue-600 dark:text-blue-400 border dark:border-blue-500/30 border-blue-200 flex-shrink-0">
+            v{appConfig?.version || "1.0.2"}
+          </span>
+        </div>
         <p className="text-[10px] sm:text-xs dark:text-slate-400 text-slate-500 mt-0.5 transition-colors truncate hidden lg:block">
           {displaySubtitle}
         </p>
