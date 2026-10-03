@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Folder,
   Globe,
@@ -22,7 +22,19 @@ export function ServerCard({
 }) {
   const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef(null);
   const isRunning = server.status === "running";
+
+  useEffect(() => {
+    if (!showMenu) return;
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showMenu]);
 
   const handleOpenExternal = (e) => {
     e.stopPropagation();
@@ -69,7 +81,7 @@ export function ServerCard({
         </div>
 
         {/* Action Menu Button */}
-        <div className="relative">
+        <div className="relative" ref={menuRef}>
           <button
             onClick={(e) => {
               e.stopPropagation();

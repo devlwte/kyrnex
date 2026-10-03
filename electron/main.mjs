@@ -389,8 +389,22 @@ app.whenReady().then(async () => {
   });
 });
 
-app.on("window-all-closed", async () => {
-  await serverManager.cleanup();
+let isCleaningUp = false;
+
+app.on("before-quit", async (event) => {
+  if (!isCleaningUp) {
+    event.preventDefault();
+    isCleaningUp = true;
+    try {
+      await serverManager.cleanup();
+    } catch (err) {
+      console.error("[Kyrnex] Error during cleanup:", err);
+    }
+    app.quit();
+  }
+});
+
+app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }

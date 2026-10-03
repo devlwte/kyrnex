@@ -3,6 +3,7 @@ import appConfig from "../config/app.config.json";
 import esLocale from "../locales/es.json";
 import enLocale from "../locales/en.json";
 import jaLocale from "../locales/ja.json";
+import ptLocale from "../locales/pt.json";
 import defaultIconPng from "../../assets/icon.png";
 import defaultIconSvg from "../../assets/icon.svg";
 
@@ -11,6 +12,7 @@ const LOCALES = {
   es: esLocale,
   en: enLocale,
   ja: jaLocale,
+  pt: ptLocale,
 };
 
 const I18nContext = createContext(null);
