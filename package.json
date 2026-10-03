@@ -1,6 +1,6 @@
 {
   "name": "kyrnex",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Kyrnex - Local Web Applications Runtime & Manager Platform",
   "main": "electron/main.mjs",
   "type": "module",

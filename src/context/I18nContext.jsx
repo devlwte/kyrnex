@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo, useCall
 import appConfig from "../config/app.config.json";
 import esLocale from "../locales/es.json";
 import enLocale from "../locales/en.json";
+import jaLocale from "../locales/ja.json";
 import defaultIconPng from "../../assets/icon.png";
 import defaultIconSvg from "../../assets/icon.svg";
 
@@ -9,6 +10,7 @@ import defaultIconSvg from "../../assets/icon.svg";
 const LOCALES = {
   es: esLocale,
   en: enLocale,
+  ja: jaLocale,
 };
 
 const I18nContext = createContext(null);

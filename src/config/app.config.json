@@ -1,7 +1,7 @@
 {
   "appName": "KYRNEX",
   "appSubtitle": "Local Web Runtime",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "KyrnForge",
   "website": "https://github.com/kyrnforge/kyrnex",
   "branding": {
@@ -15,7 +15,7 @@
     "theme": "dark",
     "defaultLanguage": "es",
     "autoStartWindows": false,
-    "remoteFeedUrl": "https://raw.githubusercontent.com/kyrnforge/kyrnex-releases/main/notifications.json"
+    "remoteFeedUrl": "https://raw.githubusercontent.com/devlwte/kyrnex/main/kyrnexServers/notifications.json"
   },
   "supportedLanguages": [
     {
@@ -29,6 +29,12 @@
       "name": "English",
       "flag": "🇺🇸",
       "nativeName": "English"
+    },
+    {
+      "code": "ja",
+      "name": "日本語",
+      "flag": "🇯🇵",
+      "nativeName": "日本語"
     }
   ]
 }

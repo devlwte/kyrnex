@@ -70,6 +70,14 @@ export function ServerDetailTabs({
     }
   };
 
+  const handleBrowseMainFile = async () => {
+    const selected = await window.kyrnexAPI?.dialogs?.selectFile();
+    if (selected) {
+      const fileName = selected.split(/[\\/]/).pop();
+      setMainFile(fileName || selected);
+    }
+  };
+
   const handleSave = () => {
     onSave(server.id, {
       name: name.trim(),
@@ -323,26 +331,55 @@ export function ServerDetailTabs({
                   <label className="text-[11px] font-medium dark:text-slate-300 text-slate-700">
                     {t("servers.mainFile", "Archivo principal")}
                   </label>
-                  <div className="relative">
-                    <FileCode
-                      size={15}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                    />
-                    <select
-                      value={mainFile}
-                      onChange={(e) => setMainFile(e.target.value)}
-                      className="w-full dark:bg-kyrn-input bg-slate-50 border dark:border-kyrn-border border-slate-300 rounded-lg pl-9 pr-8 py-2 text-xs dark:text-white text-slate-900 focus:outline-none focus:border-kyrn-blue appearance-none transition-colors"
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <FileCode
+                        size={15}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                      />
+                      <select
+                        value={mainFile}
+                        onChange={(e) => setMainFile(e.target.value)}
+                        className="w-full dark:bg-kyrn-input bg-slate-50 border dark:border-kyrn-border border-slate-300 rounded-lg pl-9 pr-8 py-2 text-xs dark:text-white text-slate-900 focus:outline-none focus:border-kyrn-blue appearance-none transition-colors"
+                      >
+                        {![
+                          "index.html",
+                          "server.js",
+                          "app.js",
+                          "main.mjs",
+                          "api.js",
+                          "index.js",
+                          "server.mjs",
+                          "main.js",
+                          "index.ejs",
+                          "routes.mjs",
+                          "index.php",
+                        ].includes(mainFile) && (
+                          <option value={mainFile}>{mainFile}</option>
+                        )}
+                        <option value="index.html">index.html (Página estática)</option>
+                        <option value="server.js">server.js (Servidor Express)</option>
+                        <option value="app.js">app.js (Servidor Express)</option>
+                        <option value="main.mjs">main.mjs (Módulo ES)</option>
+                        <option value="api.js">api.js (Backend API)</option>
+                        <option value="index.js">index.js (Script)</option>
+                        <option value="server.mjs">server.mjs (Módulo ES)</option>
+                        <option value="routes.mjs">routes.mjs (Rutas)</option>
+                        <option value="index.ejs">index.ejs (Plantilla)</option>
+                        <option value="index.php">index.php (PHP)</option>
+                      </select>
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
+                        ▼
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleBrowseMainFile}
+                      title="Examinar archivo en el disco"
+                      className="p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 hover:dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg border border-slate-300 dark:border-slate-700 transition-colors flex-shrink-0"
                     >
-                      <option value="index.html">index.html</option>
-                      <option value="index.ejs">index.ejs</option>
-                      <option value="app.js">app.js</option>
-                      <option value="server.js">server.js</option>
-                      <option value="routes.mjs">routes.mjs</option>
-                      <option value="main.mjs">main.mjs</option>
-                    </select>
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
-                      ▼
-                    </span>
+                      <FolderOpen size={14} />
+                    </button>
                   </div>
                 </div>
 
