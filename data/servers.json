@@ -1,13 +1,1 @@
-[
-  {
-    "id": "srv-murjfup9",
-    "name": "playwarp",
-    "port": 3050,
-    "rootDir": "C:\\Users\\PC\\Desktop\\IAJobs\\playwarp",
-    "publicDir": "",
-    "viewsDir": "",
-    "mainFile": "index.html",
-    "autoStart": true,
-    "type": "static"
-  }
-]
+[]
