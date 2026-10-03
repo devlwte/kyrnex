@@ -13,16 +13,34 @@
     "core/**/*",
     "modules/**/*",
     "data/**/*",
+    "assets/**/*",
     "package.json"
   ],
   "win": {
     "icon": "assets/icon.ico",
     "target": [
       {
+        "target": "nsis",
+        "arch": ["x64"]
+      },
+      {
         "target": "portable",
         "arch": ["x64"]
       }
-    ],
-    "artifactName": "Kyrnex-v${version}-Portable.${ext}"
+    ]
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Kyrnex",
+    "installerIcon": "assets/icon.ico",
+    "uninstallerIcon": "assets/icon.ico",
+    "installerHeaderIcon": "assets/icon.ico",
+    "artifactName": "Kyrnex-Setup-${version}.${ext}"
+  },
+  "portable": {
+    "artifactName": "Kyrnex-Portable-${version}.${ext}"
   }
 }
