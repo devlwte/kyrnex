@@ -1,12 +1,13 @@
 {
-  "version": "1.0.0",
-  "repo_file_update": "https://github.com/devlwte/kyrnex/archive/refs/tags/v1.0.0.zip",
+  "version": "1.0.1",
+  "repo_file_update": "https://github.com/devlwte/kyrnex/releases/download/v1.0.1/kyrnex-v1.0.1.zip",
+  "archive_url": "https://github.com/devlwte/kyrnex/releases/download/v1.0.1/kyrnex-v1.0.1.zip",
   "last_updated": "2026-10-03",
-  "changelog": "Lanzamiento oficial de Kyrnex con soporte multi-servidor y actualizador nativo.",
+  "changelog": "Soporte para más tipos de archivo principal (server.js, main.mjs, ts, etc.), botón explorador en disco y nuevo idioma Japonés (日本語 🇯🇵).",
   "notification": {
-    "update": "Welcome to Kyrnex v1.0.0",
-    "update_es": "Bienvenido a Kyrnex v1.0.0",
-    "update_jp": "Kyrnex v1.0.0へようこそ",
+    "update": "New version v1.0.1 available!",
+    "update_es": "¡Nueva versión v1.0.1 disponible con más opciones y nuevo idioma!",
+    "update_jp": "新バージョンv1.0.1が利用可能です！",
     "action_click": "restart_app"
   }
 }
