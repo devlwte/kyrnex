@@ -19,11 +19,13 @@ contextBridge.exposeInMainWorld("kyrnexAPI", {
     selectFile: (filters) => ipcRenderer.invoke("dialog:selectFile", filters),
   },
 
-  // Shell integration
+  // Shell integration & OS settings
   system: {
     openExternal: (url) => ipcRenderer.invoke("system:openExternal", url),
     openPath: (folderPath) => ipcRenderer.invoke("system:openPath", folderPath),
     getPlatform: () => process.platform,
+    getAutoStart: () => ipcRenderer.invoke("system:getAutoStart"),
+    setAutoStart: (enabled) => ipcRenderer.invoke("system:setAutoStart", enabled),
   },
 
   // Multi-server operations

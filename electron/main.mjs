@@ -203,6 +203,12 @@ async function createWindow() {
     }
   });
 
+  nativeUpdater.on("update-not-available", (data) => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send("updater:not-available", data);
+    }
+  });
+
   nativeUpdater.on("update-downloaded", (data) => {
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send("updater:downloaded", data);
@@ -294,6 +300,35 @@ ipcMain.handle("system:openPath", async (event, folderPath) => {
   return true;
 });
 
+ipcMain.handle("system:getAutoStart", () => {
+  try {
+    const settings = app.getLoginItemSettings();
+    return settings.openAtLogin;
+  } catch (err) {
+    logger?.warn("Sistema", `Error al consultar autoarranque con Windows: ${err.message}`);
+    return false;
+  }
+});
+
+ipcMain.handle("system:setAutoStart", (event, enabled) => {
+  try {
+    app.setLoginItemSettings({
+      openAtLogin: !!enabled,
+      openAsHidden: false,
+      path: process.execPath,
+      args: [],
+    });
+    logger?.info(
+      "Sistema",
+      `Inicio con el sistema Windows ${enabled ? "activado" : "desactivado"}`
+    );
+    return true;
+  } catch (err) {
+    logger?.error("Sistema", `Error al configurar inicio con el sistema: ${err.message}`);
+    return false;
+  }
+});
+
 // Server manager IPC
 ipcMain.handle("servers:getAll", async () => {
   return serverManager.getAllServers();
@@ -356,7 +391,19 @@ ipcMain.handle("updater:saveConfig", async (event, config) => {
 });
 
 ipcMain.handle("updater:check", async (event, feedUrl) => {
-  return await nativeUpdater.checkForUpdates(feedUrl);
+  logger?.info("Actualizador", "Comprobando actualizaciones manualmente...");
+  const res = await nativeUpdater.checkForUpdates(feedUrl);
+  if (res.hasUpdate) {
+    logger?.info("Actualizador", `Nueva versión disponible encontrada: v${res.latestVersion}`);
+  } else if (res.error) {
+    logger?.warn("Actualizador", `No se pudo comprobar actualizaciones: ${res.error}`);
+  } else {
+    logger?.info(
+      "Actualizador",
+      `El sistema cuenta con la versión más reciente (v${res.currentVersion || nativeUpdater.currentVersion})`
+    );
+  }
+  return res;
 });
 
 ipcMain.handle("updater:install", async (event, updateInfo) => {
@@ -396,6 +443,13 @@ app.whenReady().then(async () => {
             logger.info("Actualizador", "Instalando actualización automáticamente en segundo plano...");
             await nativeUpdater.downloadAndInstall(res);
           }
+        } else if (res.error) {
+          logger.warn("Actualizador", `Comprobación omitida: ${res.error}`);
+        } else {
+          logger.info(
+            "Actualizador",
+            `El sistema cuenta con la versión más reciente (v${res.currentVersion || nativeUpdater.currentVersion})`
+          );
         }
       }
     } catch (err) {
