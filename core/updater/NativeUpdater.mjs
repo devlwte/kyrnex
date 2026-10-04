@@ -289,26 +289,31 @@ export class NativeUpdater extends EventEmitter {
   /**
    * Creates a backup of the current target directory before applying updates
    */
-  async createBackup(targetPaths = ["dist", "core", "package.json", "src"]) {
+  async createBackup(targetPaths = ["dist", "core", "electron", "modules", "package.json", "src"]) {
+    const isAsar = this.appRoot.toLowerCase().endsWith(".asar") || this.appRoot.toLowerCase().includes(".asar");
+    const targetDir = isAsar ? path.join(path.dirname(this.appRoot), "app") : this.appRoot;
+
     const timestamp = Date.now();
     const backupDir = path.join(this.backupBaseDir, `backup-${this.currentVersion}-${timestamp}`);
     await fsp.mkdir(backupDir, { recursive: true });
 
     for (const relPath of targetPaths) {
-      const srcPath = path.join(this.appRoot, relPath);
+      const srcPath = path.join(targetDir, relPath);
       const destPath = path.join(backupDir, relPath);
 
       if (fs.existsSync(srcPath)) {
-        const stat = await fsp.stat(srcPath);
-        if (stat.isDirectory()) {
-          await fsp.cp(srcPath, destPath, { recursive: true });
-        } else {
-          const destDir = path.dirname(destPath);
-          if (!fs.existsSync(destDir)) {
-            await fsp.mkdir(destDir, { recursive: true });
+        try {
+          const stat = await fsp.stat(srcPath);
+          if (stat.isDirectory()) {
+            await fsp.cp(srcPath, destPath, { recursive: true });
+          } else {
+            const destDir = path.dirname(destPath);
+            if (!fs.existsSync(destDir)) {
+              await fsp.mkdir(destDir, { recursive: true });
+            }
+            await fsp.copyFile(srcPath, destPath);
           }
-          await fsp.copyFile(srcPath, destPath);
-        }
+        } catch {}
       }
     }
 
@@ -318,12 +323,15 @@ export class NativeUpdater extends EventEmitter {
   /**
    * Rollback files from a backup directory if any error occurs
    */
-  async rollback(backupDir, targetPaths = ["dist", "core", "package.json", "src"]) {
+  async rollback(backupDir, targetPaths = ["dist", "core", "electron", "modules", "package.json", "src"]) {
     console.warn("[NativeUpdater] Rolling back changes from:", backupDir);
+    const isAsar = this.appRoot.toLowerCase().endsWith(".asar") || this.appRoot.toLowerCase().includes(".asar");
+    const targetDir = isAsar ? path.join(path.dirname(this.appRoot), "app") : this.appRoot;
+
     try {
       for (const relPath of targetPaths) {
         const bkpSrc = path.join(backupDir, relPath);
-        const appDest = path.join(this.appRoot, relPath);
+        const appDest = path.join(targetDir, relPath);
 
         if (fs.existsSync(bkpSrc)) {
           const stat = await fsp.stat(bkpSrc);
@@ -368,7 +376,7 @@ export class NativeUpdater extends EventEmitter {
       if (downloadUrl) {
         // Download ZIP archive
         const zipBuffer = await this.fetchBuffer(downloadUrl);
-        const tempExtractDir = path.join(this.appRoot, "data", "temp_update");
+        const tempExtractDir = path.join(this.dataDir, "temp_update");
         if (fs.existsSync(tempExtractDir)) {
           await fsp.rm(tempExtractDir, { recursive: true, force: true });
         }
@@ -388,8 +396,11 @@ export class NativeUpdater extends EventEmitter {
           }
         }
 
+        const isAsar = this.appRoot.toLowerCase().endsWith(".asar") || this.appRoot.toLowerCase().includes(".asar");
+        const targetDir = isAsar ? path.join(path.dirname(this.appRoot), "app") : this.appRoot;
+
         // Clean stale assets in dist/assets to prevent file bloat
-        const oldAssetsDir = path.join(this.appRoot, "dist", "assets");
+        const oldAssetsDir = path.join(targetDir, "dist", "assets");
         const newDistDir = path.join(sourceDir, "dist");
         if (fs.existsSync(newDistDir) && fs.existsSync(oldAssetsDir)) {
           try {
@@ -397,11 +408,11 @@ export class NativeUpdater extends EventEmitter {
           } catch {}
         }
 
-        // Copy updated dist, core, package.json, and src if present
-        for (const item of ["dist", "core", "package.json", "src"]) {
+        // Copy updated dist, core, electron, modules, package.json, and src if present
+        for (const item of ["dist", "core", "electron", "modules", "package.json", "src"]) {
           const itemSrc = path.join(sourceDir, item);
           if (fs.existsSync(itemSrc)) {
-            const itemDest = path.join(this.appRoot, item);
+            const itemDest = path.join(targetDir, item);
             await fsp.cp(itemSrc, itemDest, { recursive: true, force: true });
           }
         }
@@ -409,21 +420,22 @@ export class NativeUpdater extends EventEmitter {
         // Clean up temp dir
         await fsp.rm(tempExtractDir, { recursive: true, force: true });
       } else {
-        // If repo_file_update is a direct file or URL, fetch and update version record
-        // or copy files
         console.log("[NativeUpdater] No binary zip specified; updating version record locally");
       }
 
       // Step 3: Update local package.json version
+      const isAsar = this.appRoot.toLowerCase().endsWith(".asar") || this.appRoot.toLowerCase().includes(".asar");
+      const targetDir = isAsar ? path.join(path.dirname(this.appRoot), "app") : this.appRoot;
+
       try {
-        const pkgPath = path.join(this.appRoot, "package.json");
+        const pkgPath = path.join(targetDir, "package.json");
         if (fs.existsSync(pkgPath)) {
           const pkgData = JSON.parse(await fsp.readFile(pkgPath, "utf-8"));
           pkgData.version = updateInfo.latestVersion;
           await fsp.writeFile(pkgPath, JSON.stringify(pkgData, null, 2), "utf-8");
         }
 
-        const appCfgPath = path.join(this.appRoot, "src", "config", "app.config.json");
+        const appCfgPath = path.join(targetDir, "src", "config", "app.config.json");
         if (fs.existsSync(appCfgPath)) {
           const appCfg = JSON.parse(await fsp.readFile(appCfgPath, "utf-8"));
           appCfg.version = updateInfo.latestVersion;

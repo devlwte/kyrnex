@@ -121,9 +121,9 @@ Puedes descargar la última versión oficial desde la sección de **[Releases en
 
 | Opción | Archivo | Descripción |
 | :--- | :--- | :--- |
-| **Instalador Oficial** | `Kyrnex-Setup-1.0.2.exe` | Asistente de instalación profesional para Windows con accesos directos en Escritorio y Menú Inicio. |
-| **Carpeta Portable (Zip)** | `Kyrnex-1.0.2-win.zip` / `Kyrnex-v1.0.2-Portable-Folder.zip` | Versión portable en carpeta descomprimible. No utiliza carpetas temporales (`%TEMP%`); todos los servidores, configuraciones y vistas previas se guardan permanentemente en la misma carpeta (`data/`). Ideal para memorias USB o discos externos sin permisos de administrador. |
-| **Paquete de Actualización** | `kyrnex-v1.0.2.zip` | Paquete comprimido del código fuente y frontend para el motor de auto-actualización nativo de Kyrnex. |
+| **Instalador Oficial** | `Kyrnex-Setup-1.0.3.exe` | Asistente de instalación profesional para Windows con accesos directos en Escritorio y Menú Inicio. |
+| **Carpeta Portable (Zip)** | `Kyrnex-v1.0.3-Portable-Folder.zip` | Versión portable en carpeta descomprimible. No utiliza carpetas temporales (`%TEMP%`); todos los servidores, configuraciones y vistas previas se guardan permanentemente en la misma carpeta (`data/`). Ideal para memorias USB o discos externos sin permisos de administrador. |
+| **Paquete de Actualización** | `kyrnex-v1.0.3.zip` | Paquete comprimido del código fuente y frontend para el motor de auto-actualización nativo de Kyrnex. |
 
 ---
 
