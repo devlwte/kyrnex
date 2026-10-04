@@ -94,8 +94,8 @@ export function NewServerModal({ isOpen, onClose, onCreate }) {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
+          <div className="grid grid-cols-1 sm:grid-cols-[130px_1fr] gap-3">
+            <div className="space-y-1.5 min-w-0">
               <label className="text-[11px] font-semibold dark:text-slate-300 text-slate-700">
                 {t("modals.basePort", "Puerto base *")}
               </label>
@@ -106,30 +106,30 @@ export function NewServerModal({ isOpen, onClose, onCreate }) {
                 max={65535}
                 value={port}
                 onChange={(e) => setPort(e.target.value)}
-                className="w-full dark:bg-kyrn-input bg-slate-50 border dark:border-kyrn-border border-slate-300 rounded-lg px-3.5 py-2 text-xs dark:text-white text-slate-900 focus:outline-none focus:border-kyrn-blue font-mono"
+                className="w-full dark:bg-kyrn-input bg-slate-50 border dark:border-kyrn-border border-slate-300 rounded-lg px-3 py-2 text-xs dark:text-white text-slate-900 focus:outline-none focus:border-kyrn-blue font-mono"
               />
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 min-w-0">
               <label className="text-[11px] font-semibold dark:text-slate-300 text-slate-700">
                 {t("modals.mainFile", "Archivo principal")}
               </label>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 min-w-0">
                 <input
                   type="text"
                   value={mainFile}
                   onChange={(e) => setMainFile(e.target.value)}
                   placeholder="index.html"
-                  className="flex-1 dark:bg-kyrn-input bg-slate-50 border dark:border-kyrn-border border-slate-300 rounded-lg px-3 py-2 text-xs dark:text-white text-slate-900 focus:outline-none focus:border-kyrn-blue font-mono"
+                  className="flex-1 min-w-0 dark:bg-kyrn-input bg-slate-50 border dark:border-kyrn-border border-slate-300 rounded-lg px-3 py-2 text-xs dark:text-white text-slate-900 focus:outline-none focus:border-kyrn-blue font-mono"
                 />
                 <button
                   type="button"
                   onClick={handleBrowseMainFile}
                   title="Examinar archivo"
-                  className="flex items-center gap-1 px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 hover:dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-medium border border-slate-300 dark:border-slate-700 transition-colors flex-shrink-0"
+                  className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 hover:dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-medium border border-slate-300 dark:border-slate-700 transition-colors flex-shrink-0"
                 >
-                  <FileCode size={14} />
-                  <span className="hidden sm:inline">{t("common.browse", "Explorar")}</span>
+                  <FileCode size={14} className="flex-shrink-0" />
+                  <span>{t("common.browse", "Explorar")}</span>
                 </button>
               </div>
               <div className="flex flex-wrap items-center gap-1 pt-1">
@@ -151,12 +151,12 @@ export function NewServerModal({ isOpen, onClose, onCreate }) {
             </div>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 min-w-0">
             <label className="text-[11px] font-semibold dark:text-slate-300 text-slate-700">
               {t("modals.projectRootDir", "Carpeta raíz del proyecto")}
             </label>
-            <div className="flex items-center gap-2">
-              <div className="relative flex-1">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="relative flex-1 min-w-0">
                 <Folder size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   type="text"
@@ -169,9 +169,9 @@ export function NewServerModal({ isOpen, onClose, onCreate }) {
               <button
                 type="button"
                 onClick={handleBrowse}
-                className="flex items-center gap-1.5 dark:bg-[#1b263b] bg-blue-50 hover:dark:bg-[#23334f] hover:bg-blue-100 dark:text-blue-300 text-blue-700 px-3 py-2 rounded-lg text-xs font-medium border dark:border-blue-500/30 border-blue-200"
+                className="flex items-center gap-1.5 dark:bg-[#1b263b] bg-blue-50 hover:dark:bg-[#23334f] hover:bg-blue-100 dark:text-blue-300 text-blue-700 px-3 py-2 rounded-lg text-xs font-medium border dark:border-blue-500/30 border-blue-200 flex-shrink-0"
               >
-                <Search size={13} />
+                <Search size={13} className="flex-shrink-0" />
                 <span>{t("modals.browse", "Buscar")}</span>
               </button>
             </div>

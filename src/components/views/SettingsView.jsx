@@ -22,7 +22,13 @@ import { useTranslation } from "../../context/I18nContext";
 export function SettingsView({ theme, toggleTheme, onCheckRemote, isCheckingRemote, addNotification }) {
   const { t, language, setLanguage, supportedLanguages, appConfig, defaultIconPng } = useTranslation();
   const [defaultPort, setDefaultPort] = useState(3000);
-  const [autoStartWindows, setAutoStartWindows] = useState(false);
+  const [autoStartWindows, setAutoStartWindows] = useState(() => {
+    try {
+      return localStorage.getItem("kyrnex_auto_start_windows") === "true";
+    } catch {
+      return false;
+    }
+  });
   const [cleared, setCleared] = useState(false);
   const [feedUrl, setFeedUrl] = useState(() => notificationManager.getRemoteFeedUrl());
   const [savedFeed, setSavedFeed] = useState(false);
@@ -40,9 +46,9 @@ export function SettingsView({ theme, toggleTheme, onCheckRemote, isCheckingRemo
   const [installSuccess, setInstallSuccess] = useState(false);
   const [installError, setInstallError] = useState(null);
 
-  // Load initial updater config
+  // Load initial settings (updater and Windows autoStart)
   useEffect(() => {
-    async function loadUpdaterConfig() {
+    async function loadInitialSettings() {
       try {
         const cfg = await window.kyrnexAPI?.updater?.getConfig();
         if (cfg) {
@@ -52,9 +58,45 @@ export function SettingsView({ theme, toggleTheme, onCheckRemote, isCheckingRemo
       } catch (err) {
         console.warn("Could not load updater config:", err);
       }
+
+      if (window.kyrnexAPI?.system?.getAutoStart) {
+        try {
+          const isAutoStart = await window.kyrnexAPI.system.getAutoStart();
+          setAutoStartWindows(Boolean(isAutoStart));
+          try {
+            localStorage.setItem("kyrnex_auto_start_windows", String(Boolean(isAutoStart)));
+          } catch {}
+        } catch (err) {
+          console.warn("Could not get login item settings:", err);
+        }
+      }
     }
-    loadUpdaterConfig();
+    loadInitialSettings();
   }, []);
+
+  const handleToggleAutoStart = async (checked) => {
+    setAutoStartWindows(checked);
+    try {
+      localStorage.setItem("kyrnex_auto_start_windows", String(checked));
+    } catch {}
+
+    if (window.kyrnexAPI?.system?.setAutoStart) {
+      try {
+        await window.kyrnexAPI.system.setAutoStart(checked);
+        addNotification?.({
+          title: checked
+            ? t("settings.autoStartEnabledTitle", "Inicio con el sistema activado")
+            : t("settings.autoStartDisabledTitle", "Inicio con el sistema desactivado"),
+          message: checked
+            ? t("settings.autoStartEnabledDesc", "Kyrnex se iniciará automáticamente al encender Windows.")
+            : t("settings.autoStartDisabledDesc", "Kyrnex ya no se iniciará automáticamente al encender el equipo."),
+          type: "info",
+        });
+      } catch (err) {
+        console.error("Error setting auto start:", err);
+      }
+    }
+  };
 
   const handleToggleAutoUpdate = async (checked) => {
     setAutoUpdate(checked);
@@ -103,6 +145,18 @@ export function SettingsView({ theme, toggleTheme, onCheckRemote, isCheckingRemo
           }
           setIsInstallingUpdate(false);
         }
+      } else if (res && !res.hasUpdate && !res.error) {
+        addNotification?.({
+          title: t("settings.upToDateTitle", "Sistema actualizado"),
+          message: `${t("settings.upToDate", "Kyrnex está al día")} (v${res.currentVersion || "1.0.2"}).`,
+          type: "success",
+        });
+      } else if (res && res.error) {
+        addNotification?.({
+          title: t("settings.updateErrorTitle", "Aviso del actualizador"),
+          message: res.error,
+          type: "warning",
+        });
       }
     } catch (err) {
       setUpdateResult({ hasUpdate: false, error: err.message });
@@ -630,8 +684,8 @@ export function SettingsView({ theme, toggleTheme, onCheckRemote, isCheckingRemo
             <input
               type="checkbox"
               checked={autoStartWindows}
-              onChange={(e) => setAutoStartWindows(e.target.checked)}
-              className="rounded bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-blue-600 focus:ring-blue-500 h-4 w-4"
+              onChange={(e) => handleToggleAutoStart(e.target.checked)}
+              className="rounded bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-blue-600 focus:ring-blue-500 h-4 w-4 cursor-pointer"
             />
           </div>
         </div>
