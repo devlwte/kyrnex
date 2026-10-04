@@ -2,6 +2,8 @@
   "appName": "KYRNEX",
   "appSubtitle": "Local Web Runtime",
   "version": "1.0.3",
+  "appVersion": "1.0.3",
+  "codeVersion": "1.0",
   "author": "KyrnForge",
   "website": "https://github.com/kyrnforge/kyrnex",
   "branding": {

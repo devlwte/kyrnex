@@ -391,16 +391,16 @@ ipcMain.handle("updater:saveConfig", async (event, config) => {
 });
 
 ipcMain.handle("updater:check", async (event, feedUrl) => {
-  logger?.info("Actualizador", "Comprobando actualizaciones manualmente...");
+  logger?.info("Actualizador", "Comprobando actualizaciones de código manualmente...");
   const res = await nativeUpdater.checkForUpdates(feedUrl);
   if (res.hasUpdate) {
-    logger?.info("Actualizador", `Nueva versión disponible encontrada: v${res.latestVersion}`);
+    logger?.info("Actualizador", `Nueva versión de código disponible encontrada: v${res.latestVersion}`);
   } else if (res.error) {
     logger?.warn("Actualizador", `No se pudo comprobar actualizaciones: ${res.error}`);
   } else {
     logger?.info(
       "Actualizador",
-      `El sistema cuenta con la versión más reciente (v${res.currentVersion || nativeUpdater.currentVersion})`
+      `El sistema cuenta con la versión de código más reciente (v${res.currentVersion || "1.0"})`
     );
   }
   return res;
@@ -435,12 +435,12 @@ app.whenReady().then(async () => {
     try {
       const cfg = await nativeUpdater.getConfig();
       if (cfg.autoCheck) {
-        logger.info("Actualizador", "Comprobando actualizaciones del sistema...");
+        logger.info("Actualizador", "Comprobando actualizaciones de código del sistema...");
         const res = await nativeUpdater.checkForUpdates(cfg.feedUrl);
         if (res.hasUpdate) {
-          logger.info("Actualizador", `Nueva versión disponible: v${res.latestVersion}`);
+          logger.info("Actualizador", `Nueva versión de código disponible: v${res.latestVersion}`);
           if (cfg.autoInstall) {
-            logger.info("Actualizador", "Instalando actualización automáticamente en segundo plano...");
+            logger.info("Actualizador", "Instalando actualización de código automáticamente en segundo plano...");
             await nativeUpdater.downloadAndInstall(res);
           }
         } else if (res.error) {
@@ -448,7 +448,7 @@ app.whenReady().then(async () => {
         } else {
           logger.info(
             "Actualizador",
-            `El sistema cuenta con la versión más reciente (v${res.currentVersion || nativeUpdater.currentVersion})`
+            `El sistema cuenta con la versión de código más reciente (v${res.currentVersion || "1.0"})`
           );
         }
       }

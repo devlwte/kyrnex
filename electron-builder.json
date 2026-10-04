@@ -14,6 +14,7 @@
     "modules/**/*",
     "data/**/*",
     "assets/**/*",
+    "src/config/app.config.json",
     "package.json"
   ],
   "win": {

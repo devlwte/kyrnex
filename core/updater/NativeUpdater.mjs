@@ -25,12 +25,41 @@ export class NativeUpdater extends EventEmitter {
     this.dataDir = options.dataDir || path.join(this.appRoot, "data");
     this.configPath = path.join(this.dataDir, "updater-config.json");
     this.backupBaseDir = path.join(this.dataDir, "backups");
-    this.currentVersion = options.currentVersion || "1.0.0";
     this.defaultFeedUrl =
       "https://raw.githubusercontent.com/devlwte/kyrnex/refs/heads/main/updates/version_kyrnex.json";
 
     this.isUpdating = false;
     this.lastCheckResult = null;
+  }
+
+  /**
+   * Get the current local code version (e.g. "1.0")
+   */
+  getCodeVersion() {
+    try {
+      const configPath = path.join(this.appRoot, "src", "config", "app.config.json");
+      if (fs.existsSync(configPath)) {
+        const raw = fs.readFileSync(configPath, "utf-8");
+        const parsed = JSON.parse(raw);
+        return parsed.codeVersion || "1.0";
+      }
+    } catch {}
+    return "1.0";
+  }
+
+  /**
+   * Get the host app version (e.g. "1.0.3")
+   */
+  getAppVersion() {
+    try {
+      const pkgPath = path.join(this.appRoot, "package.json");
+      if (fs.existsSync(pkgPath)) {
+        const raw = fs.readFileSync(pkgPath, "utf-8");
+        const parsed = JSON.parse(raw);
+        return parsed.version || "1.0.3";
+      }
+    } catch {}
+    return "1.0.3";
   }
 
   /**
@@ -160,7 +189,7 @@ export class NativeUpdater extends EventEmitter {
   }
 
   /**
-   * Check if a new version is available on GitHub
+   * Check if a new code version is available on GitHub
    */
   async checkForUpdates(customFeedUrl) {
     const config = await this.getConfig();
@@ -170,21 +199,32 @@ export class NativeUpdater extends EventEmitter {
       this.emit("checking-for-update");
       const remoteData = await this.fetchJson(feedUrl);
 
-      const latestVersion = remoteData.version || "1.0.0";
-      const hasUpdate = this.compareVersions(latestVersion, this.currentVersion) > 0;
+      const localCodeVersion = this.getCodeVersion();
+      const remoteCodeVersion = remoteData.code_version || remoteData.version || "1.0";
+      const hasUpdate = this.compareVersions(remoteCodeVersion, localCodeVersion) > 0;
+
+      const downloadUrl =
+        remoteData.download_url ||
+        remoteData.update_url ||
+        remoteData.archive_url ||
+        remoteData.repo_file_update ||
+        null;
 
       const result = {
         hasUpdate,
-        currentVersion: this.currentVersion,
-        latestVersion,
+        currentVersion: localCodeVersion,
+        latestVersion: remoteCodeVersion,
+        currentCodeVersion: localCodeVersion,
+        latestCodeVersion: remoteCodeVersion,
+        appVersion: this.getAppVersion(),
         lastUpdated: remoteData.last_updated || null,
         changelog:
           remoteData.changelog ||
           remoteData.notification?.update_es ||
           remoteData.notification?.update ||
-          "Nueva versión disponible con mejoras de estabilidad.",
-        repoFileUpdate: remoteData.repo_file_update || null,
-        archiveUrl: remoteData.archive_url || null,
+          "Nueva versión de código disponible con mejoras.",
+        downloadUrl,
+        archiveUrl: downloadUrl,
         notification: remoteData.notification || null,
         feedUrl,
         checkedAt: new Date().toISOString(),
@@ -193,7 +233,7 @@ export class NativeUpdater extends EventEmitter {
       this.lastCheckResult = result;
       await this.saveConfig({
         lastChecked: result.checkedAt,
-        lastVersionChecked: latestVersion,
+        lastVersionChecked: remoteCodeVersion,
       });
 
       if (hasUpdate) {
@@ -209,7 +249,7 @@ export class NativeUpdater extends EventEmitter {
       return {
         hasUpdate: false,
         error: err.message,
-        currentVersion: this.currentVersion,
+        currentVersion: this.getCodeVersion(),
         checkedAt: new Date().toISOString(),
       };
     }
@@ -290,11 +330,9 @@ export class NativeUpdater extends EventEmitter {
    * Creates a backup of the current target directory before applying updates
    */
   async createBackup(targetPaths = ["dist", "core", "electron", "modules", "package.json", "src"]) {
-    const isAsar = this.appRoot.toLowerCase().endsWith(".asar") || this.appRoot.toLowerCase().includes(".asar");
-    const targetDir = isAsar ? path.join(path.dirname(this.appRoot), "app") : this.appRoot;
-
+    const targetDir = this.appRoot;
     const timestamp = Date.now();
-    const backupDir = path.join(this.backupBaseDir, `backup-${this.currentVersion}-${timestamp}`);
+    const backupDir = path.join(this.backupBaseDir, `backup-c${this.getCodeVersion()}-${timestamp}`);
     await fsp.mkdir(backupDir, { recursive: true });
 
     for (const relPath of targetPaths) {
@@ -325,8 +363,7 @@ export class NativeUpdater extends EventEmitter {
    */
   async rollback(backupDir, targetPaths = ["dist", "core", "electron", "modules", "package.json", "src"]) {
     console.warn("[NativeUpdater] Rolling back changes from:", backupDir);
-    const isAsar = this.appRoot.toLowerCase().endsWith(".asar") || this.appRoot.toLowerCase().includes(".asar");
-    const targetDir = isAsar ? path.join(path.dirname(this.appRoot), "app") : this.appRoot;
+    const targetDir = this.appRoot;
 
     try {
       for (const relPath of targetPaths) {
@@ -368,7 +405,9 @@ export class NativeUpdater extends EventEmitter {
 
       // Step 2: Determine download source (ZIP archive or direct bundle)
       const downloadUrl =
+        updateInfo.downloadUrl ||
         updateInfo.archiveUrl ||
+        updateInfo.update_url ||
         (updateInfo.repoFileUpdate && updateInfo.repoFileUpdate.endsWith(".zip")
           ? updateInfo.repoFileUpdate
           : null);
@@ -385,7 +424,7 @@ export class NativeUpdater extends EventEmitter {
         // Unpack ZIP
         await this.unpackZipBuffer(zipBuffer, tempExtractDir);
 
-        // Find root of extracted files (handles repos zipped as repo-main/...)
+        // Find root of extracted files (handles flat or single directory wrapper)
         const entries = await fsp.readdir(tempExtractDir);
         let sourceDir = tempExtractDir;
         if (entries.length === 1) {
@@ -396,8 +435,7 @@ export class NativeUpdater extends EventEmitter {
           }
         }
 
-        const isAsar = this.appRoot.toLowerCase().endsWith(".asar") || this.appRoot.toLowerCase().includes(".asar");
-        const targetDir = isAsar ? path.join(path.dirname(this.appRoot), "app") : this.appRoot;
+        const targetDir = this.appRoot;
 
         // Clean stale assets in dist/assets to prevent file bloat
         const oldAssetsDir = path.join(targetDir, "dist", "assets");
@@ -419,32 +457,19 @@ export class NativeUpdater extends EventEmitter {
 
         // Clean up temp dir
         await fsp.rm(tempExtractDir, { recursive: true, force: true });
-      } else {
-        console.log("[NativeUpdater] No binary zip specified; updating version record locally");
       }
 
-      // Step 3: Update local package.json version
-      const isAsar = this.appRoot.toLowerCase().endsWith(".asar") || this.appRoot.toLowerCase().includes(".asar");
-      const targetDir = isAsar ? path.join(path.dirname(this.appRoot), "app") : this.appRoot;
-
+      // Step 3: Update local codeVersion in app.config.json
+      const targetDir = this.appRoot;
       try {
-        const pkgPath = path.join(targetDir, "package.json");
-        if (fs.existsSync(pkgPath)) {
-          const pkgData = JSON.parse(await fsp.readFile(pkgPath, "utf-8"));
-          pkgData.version = updateInfo.latestVersion;
-          await fsp.writeFile(pkgPath, JSON.stringify(pkgData, null, 2), "utf-8");
-        }
-
         const appCfgPath = path.join(targetDir, "src", "config", "app.config.json");
         if (fs.existsSync(appCfgPath)) {
           const appCfg = JSON.parse(await fsp.readFile(appCfgPath, "utf-8"));
-          appCfg.version = updateInfo.latestVersion;
+          appCfg.codeVersion = updateInfo.latestVersion;
           await fsp.writeFile(appCfgPath, JSON.stringify(appCfg, null, 2), "utf-8");
         }
-
-        this.currentVersion = updateInfo.latestVersion;
-      } catch (pkgErr) {
-        console.warn("[NativeUpdater] Could not update version in configs:", pkgErr);
+      } catch (cfgErr) {
+        console.warn("[NativeUpdater] Could not update codeVersion in config:", cfgErr);
       }
 
       this.isUpdating = false;

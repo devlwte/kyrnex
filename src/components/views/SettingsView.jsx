@@ -148,7 +148,7 @@ export function SettingsView({ theme, toggleTheme, onCheckRemote, isCheckingRemo
       } else if (res && !res.hasUpdate && !res.error) {
         addNotification?.({
           title: t("settings.upToDateTitle", "Sistema actualizado"),
-          message: `${t("settings.upToDate", "Kyrnex está al día")} (v${res.currentVersion || "1.0.2"}).`,
+          message: `${t("settings.upToDate", "Kyrnex está al día")} (código v${res.currentVersion || "1.0"}).`,
           type: "success",
         });
       } else if (res && res.error) {
@@ -529,14 +529,18 @@ export function SettingsView({ theme, toggleTheme, onCheckRemote, isCheckingRemo
           {/* Acciones de comprobación y estado */}
           <div className="pt-2 border-t dark:border-kyrn-border/60 border-slate-200 space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-4">
                 <div className="text-xs">
-                  <span className="text-slate-400">{t("settings.currentVersionLabel", "Versión instalada")}: </span>
-                  <span className="font-bold font-mono dark:text-white text-slate-900">v{appConfig?.version || "1.0.0"}</span>
+                  <span className="text-slate-400">{t("settings.appVersionLabel", "Programa")}: </span>
+                  <span className="font-bold font-mono dark:text-white text-slate-900">v{appConfig?.appVersion || appConfig?.version || "1.0.3"}</span>
+                </div>
+                <div className="text-xs">
+                  <span className="text-slate-400">{t("settings.codeVersionLabel", "Código")}: </span>
+                  <span className="font-bold font-mono text-blue-500">v{appConfig?.codeVersion || "1.0"}</span>
                 </div>
                 {updateResult?.latestVersion && (
                   <div className="text-xs">
-                    <span className="text-slate-400">{t("settings.latestVersionLabel", "Última versión en GitHub")}: </span>
+                    <span className="text-slate-400">{t("settings.latestVersionLabel", "Último código")}: </span>
                     <span className="font-bold font-mono text-emerald-500">v{updateResult.latestVersion}</span>
                   </div>
                 )}

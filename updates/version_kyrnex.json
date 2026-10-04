@@ -1,14 +1,17 @@
 {
-  "version": "1.0.3",
-  "repo_file_update": "https://github.com/devlwte/kyrnex/releases/download/v1.0.3/kyrnex-v1.0.3.zip",
-  "archive_url": "https://github.com/devlwte/kyrnex/releases/download/v1.0.3/kyrnex-v1.0.3.zip",
+  "app_version": "1.0.3",
+  "code_version": "1.0",
+  "version": "1.0",
+  "download_url": "https://github.com/devlwte/kyrnex/releases/download/v1.0.3/update.zip",
+  "update_url": "https://github.com/devlwte/kyrnex/releases/download/v1.0.3/update.zip",
+  "archive_url": "https://github.com/devlwte/kyrnex/releases/download/v1.0.3/update.zip",
   "last_updated": "2026-10-04",
-  "changelog": "Corrección de responsive en modal de creación de servidor, feedback explícito en registros de actualización y persistencia del autoarranque con Windows.",
+  "changelog": "Versión 1.0 de código: Sistema de actualización directa Hot-Code simplificado sin ASAR.",
   "notification": {
-    "update": "New version v1.0.3 available!",
-    "update_es": "¡Nueva versión v1.0.3 disponible! Correcciones en interfaz y autoarranque.",
-    "update_jp": "新バージョンv1.0.3が利用可能です！",
-    "update_pt": "Nova versão v1.0.3 disponível com melhorias!",
+    "update": "New code update v1.0 available!",
+    "update_es": "¡Nueva actualización de código v1.0 disponible!",
+    "update_jp": "新コードバージョンv1.0が利用可能です！",
+    "update_pt": "Nova atualização de código v1.0 disponível!",
     "action_click": "restart_app"
   }
 }

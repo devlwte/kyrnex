@@ -9,6 +9,7 @@
     "build": "vite build",
     "start": "electron .",
     "package": "npm run build && electron-builder",
+    "pack:update": "node scripts/pack-update.mjs",
     "test:dynexpress": "node test/test-dynexpress.mjs",
     "test:v2": "node test/test-dynexpress-v2.mjs",
     "test": "node test/test-dynexpress.mjs && node test/test-dynexpress-v2.mjs"
